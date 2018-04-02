@@ -6,6 +6,7 @@ try:
 except ImportError:
     import ConfigParser as configparser
 import os.path
+import ovirtsdk4 as sdk
 import shlex
 import subprocess
 import sys
@@ -95,6 +96,15 @@ class GenerateMappingFile():
                  log_file,
                  END))
 
+    def _connect_sdk(self, url, username, password, ca):
+        connection = sdk.Connection(
+            url=url,
+            username=username,
+            password=password,
+            ca_file=ca,
+        )
+        return connection
+
     def _validate_connection(self,
                              url,
                              username,
@@ -104,11 +114,11 @@ class GenerateMappingFile():
         try:
             conn = self._connect_sdk(url,
                                      username,
-                                     primary_password,
-                                     primary_ca)
+                                     password,
+                                     ca)
             dcs_service = conn.system_service().data_centers_service()
             dcs_service.list()
-        except Exception:
+        except Exception as e:
             print(
                 "%s%sConnection to setup has failed."
                 " Please check your cradentials: "
@@ -124,6 +134,7 @@ class GenerateMappingFile():
                  PREFIX,
                  ca,
                  END))
+            print e
             if conn:
                 conn.close()
             return False
