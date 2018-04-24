@@ -1,0 +1,5 @@
+ENGINE_DATA_DIR="/usr/local/share/ovirt-engine"
+ENGINE_DATA_BIN_DIR="/usr/local/share/ovirt-engine/bin"
+ENGINE_DATA_SETUP_DIR="/usr/local/share/ovirt-engine/setup"
+PKG_SYSCONF_DIR="/usr/local/etc/ovirt-engine-metrics"
+COLLECTD_PGPASS="/usr/local/var/lib/ovirt-collectd/pgpass/engine.pgpass"

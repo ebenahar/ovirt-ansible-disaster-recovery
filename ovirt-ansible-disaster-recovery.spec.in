@@ -1,6 +1,31 @@
+# Copyright (C) 2018 Red Hat, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+%global         package_version @PACKAGE_VERSION@
+%global metrics_data %{_datadir}/@PACKAGE_NAME@
+%global metrics_roles_data %{_datadir}/ansible/roles/oVirt.disaster-recovery
+%global metrics_etc %{_sysconfdir}/@PACKAGE_NAME@
 %global rolename disaster-recovery
 %global roleprefix oVirt.
 %global ansible_roles_dir ansible/roles
+
+%global make_common_opts \\\
+        PREFIX=%{_prefix} \\\
+        SYSCONF_DIR=%{_sysconfdir} \\\
+        DATAROOT_DIR=%{_datadir} \\\
+        LOCALSTATE_DIR=%{_localstatedir} \\\
+        BUILD_VALIDATION=0
 
 Name: @PACKAGE_NAME@
 Summary: Ansible role to perform disaster recovery for oVirt engine
@@ -21,8 +46,10 @@ This Ansible role provide funtionality to perform disaster recovery for oVirt en
 %setup -c -q
 
 %build
+make %{make_common_opts}
 
 %install
+make %{make_common_opts} install DESTDIR="%{buildroot}"
 export PKG_DATA_DIR_ORIG=%{_datadir}/%{ansible_roles_dir}/%{roleprefix}%{rolename}
 export PKG_DATA_DIR=%{buildroot}$PKG_DATA_DIR_ORIG
 export PKG_DOC_DIR=%{buildroot}%{_pkgdocdir}
@@ -30,7 +57,10 @@ sh build.sh install
 
 %files
 %{_datadir}/%{ansible_roles_dir}/%{roleprefix}%{rolename}
-
+%{metrics_data}
+%{metrics_roles_data}
+%{metrics_etc}
+%{metrics_etc}/config.yml.d
 %doc README.md
 %doc examples/
 
